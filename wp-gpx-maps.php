@@ -3,7 +3,7 @@
  * Plugin Name: WP-GPX-Maps
  * Plugin URI: http://www.devfarm.it/
  * Description: Draws a GPX track with altitude chart
- * Version: 1.8.00
+ * Version: 1.8.01
  * Author: Bastianon Massimo
  * Author URI: http://www.devfarm.it/
  * Text Domain: wp-gpx-maps
@@ -18,7 +18,7 @@
 /**
  * Version of the plugin
  */
-define( 'WPGPXMAPS_CURRENT_VERSION', '1.8.00' );
+define( 'WPGPXMAPS_CURRENT_VERSION', '1.8.01' );
 
 require 'wp-gpx-maps-utils.php';
 require 'wp-gpx-maps-admin.php';
@@ -216,50 +216,71 @@ function wpgpxmaps_handle_folder_shortcodes( $attr, $content = '' ) {
 			$points_graph_dist = '';
 			$points_graph_ele  = '';
 
-			if ( is_array( $points_x_lat ) )
-			foreach ( array_keys( $points_x_lat ) as $i ) {
-				$_lat = (float) $points_x_lat[$i];
-				$_lon = (float) $points_x_lon[$i];
+                        if ( isset( $points->lat ) && is_array( $points->lat ) ) {
+                                $ele_items  = ( isset( $points->ele ) && is_array( $points->ele ) ) ? $points->ele : array();
+                                $dist_items = ( isset( $points->dist ) && is_array( $points->dist ) ) ? $points->dist : array();
+                                $lon_items  = ( isset( $points->lon ) && is_array( $points->lon ) ) ? $points->lon : array();
 
-				if ( 0 == $_lat && 0 == $_lon ) {
-					$points_maps       .= 'null,';
-					$points_graph_dist .= 'null,';
-					$points_graph_ele  .= 'null,';
+                                foreach ( array_keys( $points->lat ) as $i ) {
+                                        if ( ! array_key_exists( $i, $lon_items ) ) {
+                                                continue;
+                                        }
 
-				} else {
-					$points_maps .= '[' . number_format( (float) $points_x_lat[$i], 7, '.', '' ) . ',' . number_format( (float) $points_x_lon[$i], 7, '.', '' ) . '],';
+                                        $lat_value = $points->lat[ $i ];
+                                        $lon_value = $lon_items[ $i ];
 
-					$_ele  = (float) $points->ele[$i];
-					$_dist = (float) $points->dist[$i];
+                                        if ( null === $lat_value || null === $lon_value ) {
+                                                $points_maps       .= 'null,';
+                                                $points_graph_dist .= 'null,';
+                                                $points_graph_ele  .= 'null,';
+                                                continue;
+                                        }
 
-					if ( wpgpxmaps_FEET_MILES == $unit_of_measure ) {
-						/* feet / miles */
-						$_dist *= 0.000621371192;
-						$_ele  *= 3.2808399;
+                                        $_lat = (float) $lat_value;
+                                        $_lon = (float) $lon_value;
 
-					} elseif ( wpgpxmaps_METERS_KILOMETERS == $unit_of_measure ) {
-						/* meters / kilometers */
-						$_dist = (float) ( $_dist / 1000 );
+                                        if ( 0 == $_lat && 0 == $_lon ) {
+                                                $points_maps       .= 'null,';
+                                                $points_graph_dist .= 'null,';
+                                                $points_graph_ele  .= 'null,';
+                                                continue;
+                                        }
 
-					} elseif ( wpgpxmaps_METERS_NAUTICALMILES == $unit_of_measure ) {
-						/* meters / nautical miles */
-						$_dist = (float) ( $_dist / 1000 / 1.852 );
+                                        $points_maps .= '[' . number_format( $_lat, 7, '.', '' ) . ',' . number_format( $_lon, 7, '.', '' ) . '],';
 
-					} elseif ( wpgpxmaps_METER_MILES == $unit_of_measure ) {
-						/* meters / miles */
-						$_dist *= 0.000621371192;
+                                        $ele_value  = array_key_exists( $i, $ele_items ) ? $ele_items[ $i ] : 0;
+                                        $dist_value = array_key_exists( $i, $dist_items ) ? $dist_items[ $i ] : 0;
 
-					} elseif ( wpgpxmaps_FEET_NAUTICALMILES == $unit_of_measure ) {
-						/* feet / nautical miles */
-						$_dist = (float) ( $_dist / 1000 / 1.852 );
-						$_ele *= 3.2808399;
-					}
+                                        $_ele  = (float) $ele_value;
+                                        $_dist = (float) $dist_value;
 
-					$points_graph_dist .= number_format( $_dist, 2, '.', '' ) . ',';
-					$points_graph_ele  .= number_format( $_ele, 2, '.', '' ) . ',';
+                                        if ( wpgpxmaps_FEET_MILES == $unit_of_measure ) {
+                                                /* feet / miles */
+                                                $_dist *= 0.000621371192;
+                                                $_ele  *= 3.2808399;
 
-				}
-			}
+                                        } elseif ( wpgpxmaps_METERS_KILOMETERS == $unit_of_measure ) {
+                                                /* meters / kilometers */
+                                                $_dist = (float) ( $_dist / 1000 );
+
+                                        } elseif ( wpgpxmaps_METERS_NAUTICALMILES == $unit_of_measure ) {
+                                                /* meters / nautical miles */
+                                                $_dist = (float) ( $_dist / 1000 / 1.852 );
+
+                                        } elseif ( wpgpxmaps_METER_MILES == $unit_of_measure ) {
+                                                /* meters / miles */
+                                                $_dist *= 0.000621371192;
+
+                                        } elseif ( wpgpxmaps_FEET_NAUTICALMILES == $unit_of_measure ) {
+                                                /* feet / nautical miles */
+                                                $_dist = (float) ( $_dist / 1000 / 1.852 );
+                                                $_ele *= 3.2808399;
+                                        }
+
+                                        $points_graph_dist .= number_format( $_dist, 2, '.', '' ) . ',';
+                                        $points_graph_ele  .= number_format( $_ele, 2, '.', '' ) . ',';
+                                }
+                        }
 			//print_r( $points );
 		}
 	}

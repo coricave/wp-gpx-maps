@@ -4,9 +4,9 @@ Contributors: bastianonm, Stephan Klein, Michel Selerin, TosattoSimonePio, Knieb
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=8VHWLRW6JBTML
 Tags: maps, gpx, gps, graph, chart, leaflet, track, garmin, image, nextgen-gallery, nextgen, exif, OpenStreetMap, OpenCycleMap, Hike&Bike, heart rate, heartrate, cadence
 Requires at least: 6.2.0
-Tested up to: 6.7.1
-Requires PHP: 7.3+
-Stable tag: 1.7.11
+Tested up to: 6.8.3
+Requires PHP: 7.4+
+Stable tag: 1.8.01
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -196,6 +196,11 @@ Yes!
 1. Altitude & Speed & Heart rate
 
 == Changelog ==
+
+= 1.8.01 =
+* Declare compatibility with WordPress 6.8.3 and PHP 8.3.
+* Fix PHP 8.3 warnings caused by undefined variables when generating folder shortcodes.
+* Ensure attachment metadata uses safe paths and always outputs alt attributes for accessibility.
 
 = 1.8.00 =
 * MapBox provider: needs ApiKey and brings a lot of new cool features like 3d maps and much more
