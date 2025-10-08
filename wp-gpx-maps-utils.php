@@ -1,7 +1,7 @@
 <?php
 
-	require_once( ABSPATH . 'wp-admin/includes/file.php' );
-	require_once( 'wp-gpx-maps-utils-nggallery.php' );
+require_once ABSPATH . 'wp-admin/includes/file.php';
+require_once __DIR__ . '/wp-gpx-maps-utils-nggallery.php';
 
 	// Helpers pour éviter ValueError sous PHP 8 quand les tableaux sont vides
 	if (!function_exists('wpgpx_safe_max')) {
@@ -32,12 +32,12 @@ function wpgpxmaps_getAttachedImages( $dt, $lat, $lon, $dtoffset, &$error ) {
 		foreach ( $attachments as $attachment_id => $attachment ) {
 			$img_src      = wp_get_attachment_image_src( $attachment_id, 'full' );
 			$img_thmb     = wp_get_attachment_image_src( $attachment_id, 'thumbnail' );
-			$img_metadata = wp_get_attachment_metadata( $attachment_id );
-			$img_file     = get_attached_file( $attachment_id, $unfiltered );
+                        $img_metadata = wp_get_attachment_metadata( $attachment_id );
+                        $img_file     = get_attached_file( $attachment_id );
 
 			$item         = array();
 			$item['data'] = wp_get_attachment_link( $attachment_id, array( 105, 105 ) );
-			if (!strpos('alt',$item['data'])) {
+                        if ( strpos( $item['data'], 'alt=' ) === false ) {
 				if (!empty(get_the_excerpt($attachment_id))) {
 					$item['data'] = str_replace('src=','alt="' . esc_attr(get_the_excerpt($attachment_id)) . '" src=',$item['data']);
 				} elseif (!empty(get_the_title($attachment_id))) {
