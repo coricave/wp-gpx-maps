@@ -731,8 +731,8 @@ function wpgpxmaps_handle_shortcodes( $attr, $content = '' ) {
 			<div id="report_' . esc_attr( $r ) . '" class="report"></div>
 		</div>
 		' . esc_html( $error ) . '
-		<script type="module">
-		import { WPGPXMaps } from "'. "../wp-content/plugins/wp-gpx-maps/assets/dist/WP-GPX-Maps.es.js" . '";
+                <script type="module">
+                import { WPGPXMaps } from "' . esc_url( plugins_url( 'assets/dist/WP-GPX-Maps.es.js', __FILE__ ) ) . '";
 
 		window.addEventListener("load", function() {
 
